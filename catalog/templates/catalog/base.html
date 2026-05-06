@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Мой магазин{% endblock %}</title>
+</head>
+<body>
+
+    {% include 'catalog/menu.html' %}
+
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <footer>
+        <hr>
+        <p>© 2025 Мой магазин. Все права защищены.</p>
+    </footer>
+
+</body>
+</html>

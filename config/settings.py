@@ -118,7 +118,7 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 SILENCED_SYSTEM_CHECKS = ['urls.W002', 'urls.W003']
-APPEND_SLASH = False
+APPEND_SLASH = True
 import sys
 if 'runserver' in sys.argv:
     from django.core.checks import register, Tags

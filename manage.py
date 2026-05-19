@@ -3,7 +3,6 @@
 
 import os
 import sys
-import monkey_patch
 
 def main():
     """Run administrative tasks."""

@@ -1,0 +1,31 @@
+{% extends 'catalog/base.html' %}
+
+{% block title %}Добавить продукт{% endblock %}
+
+{% block content %}
+<h1>Добавить новый продукт</h1>
+
+<form method="post">
+    {% csrf_token %}
+
+    {% for field in form %}
+        <div>
+            {{ field.label_tag }}
+            {{ field }}
+            {% if field.errors %}
+                <div style="color: red; margin-top: -10px; margin-bottom: 10px;">
+                    {% for error in field.errors %}
+                        {{ error }}<br>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+    {% endfor %}
+
+    <button type="submit">Сохранить продукт</button>
+</form>
+
+<p style="margin-top: 20px;">
+    <a href="{% url 'home' %}">На главную</a>
+</p>
+{% endblock %}

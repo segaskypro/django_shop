@@ -6,6 +6,8 @@ from django.views.generic import ListView, DetailView, TemplateView, UpdateView,
 from django.urls import reverse_lazy
 from django.views.generic import CreateView
 from .forms import ProductForm
+from django.contrib.auth.mixins import LoginRequiredMixin
+
 
 class HomeListView(ListView):
     model = Product
@@ -27,19 +29,23 @@ def contacts(request):
         return render(request, 'catalog/contacts.html', {'message': message})
     return render(request, 'catalog/contacts.html')
 
-class ProductCreateView(CreateView):
+class ProductCreateView(LoginRequiredMixin, CreateView):
     model = Product
     form_class = ProductForm
     template_name = 'catalog/product_form.html'
     success_url = reverse_lazy('home')
+    login_url = '/users/login/'  # перенаправление на страницу входа
 
-class ProductUpdateView(UpdateView):
+class ProductUpdateView(LoginRequiredMixin, UpdateView):
     model = Product
     form_class = ProductForm
     template_name = 'catalog/product_form.html'
     success_url = reverse_lazy('home')
+    login_url = '/users/login/'
 
-class ProductDeleteView(DeleteView):
+class ProductDeleteView(LoginRequiredMixin, DeleteView):
     model = Product
     success_url = reverse_lazy('home')
     template_name = 'catalog/product_confirm_delete.html'
+    login_url = '/users/login/'
+

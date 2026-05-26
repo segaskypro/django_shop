@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
@@ -9,13 +9,13 @@
         nav a { color: white; margin-right: 15px; text-decoration: none; }
         .container { max-width: 1200px; margin: 0 auto; }
         .form-field {
-    width: 100%;
-    padding: 8px;
-    margin: 5px 0 15px 0;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-sizing: border-box;
-}
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0 15px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
     </style>
 </head>
 <body>
@@ -23,6 +23,14 @@
         <a href="{% url 'home' %}">Главная</a>
         <a href="{% url 'blog:list' %}">Блог</a>
         <a href="{% url 'contacts' %}">Контакты</a>
+
+        {% if user.is_authenticated %}
+            <span style="color: white; margin-left: 20px;">Привет, {{ user.email }}!</span>
+            <a href="{% url 'users:logout' %}" style="margin-left: 10px;">Выйти</a>
+        {% else %}
+            <a href="{% url 'users:login' %}" style="margin-left: 20px;">Войти</a>
+            <a href="{% url 'users:register' %}">Регистрация</a>
+        {% endif %}
     </nav>
     <div class="container">
         {% block content %}

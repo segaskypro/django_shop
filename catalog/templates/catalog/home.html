@@ -1,23 +1,17 @@
-{% extends 'catalog/base.html' %}
+{% extends 'base.html' %}
 
 {% block title %}Главная страница{% endblock %}
 
 {% block content %}
     <h1>Список товаров</h1>
 
-    {% if products %}
-        {% for product in products %}
-            <div style="border: 1px solid #ccc; margin: 10px; padding: 10px; width: 300px;">
-                <h3>{{ product.name }}</h3>
-                <p><strong>Цена:</strong> {{ product.price }} руб.</p>
-                <p>
-                    <strong>Описание:</strong>
-                    {{ product.description|truncatechars:100 }}
-                </p>
-                <a href="{% url 'product_detail' product.id %}">Подробнее →</a>
-            </div>
-        {% endfor %}
-    {% else %}
-        <p>Товаров пока нет.</p>
-    {% endif %}
+    {% for product in products %}
+        <div>
+            <h2>{{ product.name }}</h2>
+            <p><strong>Цена:</strong> {{ product.price }} руб.</p>
+            <p>{{ product.description }}</p>
+            <a href="{% url 'product_detail' product.id %}">Подробнее →</a>
+        </div>
+        <hr>
+    {% endfor %}
 {% endblock %}

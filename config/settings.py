@@ -128,3 +128,7 @@ if 'runserver' in sys.argv:
     @register(Tags.urls)
     def skip_url_check(**kwargs):
         return []
+
+# Настройки почты (для разработки — вывод в консоль)
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+DEFAULT_FROM_EMAIL = 'noreply@myshop.com'

@@ -54,3 +54,8 @@ class UserLoginForm(AuthenticationForm):
     class Meta:
         model = User
         fields = ['username', 'password']
+
+class UserProfileForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['avatar', 'phone_number', 'country']

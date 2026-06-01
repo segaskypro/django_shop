@@ -1,18 +1,14 @@
-{% extends 'catalog/base.html' %}
+{% extends 'base.html' %}
 
 {% block title %}Удалить продукт{% endblock %}
 
 {% block content %}
-<h1>Удалить продукт "{{ product.name }}"?</h1>
-<p>Вы уверены, что хотите удалить этот продукт? Это действие нельзя отменить.</p>
+    <h1>Удалить продукт "{{ product.name }}"?</h1>
+    <p>Вы уверены, что хотите удалить этот продукт? Это действие нельзя отменить.</p>
 
-<form method="post">
-    {% csrf_token %}
-    <button type="submit" style="background-color: red; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">✅ Да, удалить</button>
-    <a href="{% url 'product_detail' product.pk %}" style="margin-left: 20px;">❌ Отмена</a>
-</form>
-
-<p style="margin-top: 20px;">
-    <a href="{% url 'home' %}">На главную</a>
-</p>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" style="background-color: red; color: white; padding: 10px 20px; border: none; cursor: pointer;">Да, удалить</button>
+        <a href="{% url 'catalog:home' %}" style="margin-left: 10px;">Отмена</a>
+    </form>
 {% endblock %}

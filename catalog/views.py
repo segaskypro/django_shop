@@ -1,4 +1,4 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from .models import Product
@@ -7,12 +7,23 @@ from django.urls import reverse_lazy
 from django.views.generic import CreateView
 from .forms import ProductForm
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.decorators import permission_required
 
+@permission_required('catalog.can_unpublish_product')
+def unpublish_product(request, pk):
+    product = get_object_or_404(Product, pk=pk)
+    product.is_published = False
+    product.save()
+    return redirect('catalog:home')
 
 class HomeListView(ListView):
     model = Product
     template_name = 'catalog/home.html'
     context_object_name = 'products'
+
+    def get_queryset(self):
+        # Показываем только опубликованные продукты
+        return Product.objects.filter(is_published=True)
 
 class ProductDetailView(DetailView):
     model = Product
@@ -33,19 +44,24 @@ class ProductCreateView(LoginRequiredMixin, CreateView):
     model = Product
     form_class = ProductForm
     template_name = 'catalog/product_form.html'
-    success_url = reverse_lazy('home')
-    login_url = '/users/login/'  # перенаправление на страницу входа
+    success_url = reverse_lazy('catalog:home')
+    login_url = '/users/login/'
+
+    def form_valid(self, form):
+        product = form.save(commit=False)
+        product.owner = self.request.user
+        product.save()
+        return super().form_valid(form)
 
 class ProductUpdateView(LoginRequiredMixin, UpdateView):
     model = Product
     form_class = ProductForm
     template_name = 'catalog/product_form.html'
-    success_url = reverse_lazy('home')
+    success_url = reverse_lazy('catalog:home')
     login_url = '/users/login/'
 
 class ProductDeleteView(LoginRequiredMixin, DeleteView):
     model = Product
-    success_url = reverse_lazy('home')
+    success_url = reverse_lazy('catalog:home')
     template_name = 'catalog/product_confirm_delete.html'
     login_url = '/users/login/'
-

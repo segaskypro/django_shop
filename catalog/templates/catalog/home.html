@@ -5,12 +5,25 @@
 {% block content %}
     <h1>Список товаров</h1>
 
+    <a href="{% url 'catalog:product_create' %}" style="display: inline-block; margin-bottom: 20px; padding: 10px 20px; background: #007bff; color: white; text-decoration: none; border-radius: 5px;">➕ Добавить продукт</a>
+
     {% for product in products %}
         <div>
             <h2>{{ product.name }}</h2>
             <p><strong>Цена:</strong> {{ product.price }} руб.</p>
             <p>{{ product.description }}</p>
-            <a href="{% url 'product_detail' product.id %}">Подробнее →</a>
+            <a href="{% url 'catalog:product_detail' product.id %}">Подробнее →</a>
+
+            {% if perms.catalog.can_unpublish_product %}
+                <br>
+                <a href="{% url 'catalog:unpublish_product' product.id %}" style="color: red;">Снять с публикации</a>
+            {% endif %}
+
+            {% if user == product.owner or perms.catalog.can_unpublish_product %}
+                <br>
+                <a href="{% url 'catalog:product_update' product.id %}">✏️ Редактировать</a>
+                <a href="{% url 'catalog:product_delete' product.id %}" style="color: red;">🗑️ Удалить</a>
+            {% endif %}
         </div>
         <hr>
     {% endfor %}

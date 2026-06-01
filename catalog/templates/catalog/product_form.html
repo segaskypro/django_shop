@@ -1,11 +1,11 @@
-{% extends 'catalog/base.html' %}
+{% extends 'base.html' %}
 
 {% block title %}Добавить продукт{% endblock %}
 
 {% block content %}
 <h1>Добавить новый продукт</h1>
 
-<form method="post">
+<form method="post" enctype="multipart/form-data">
     {% csrf_token %}
 
     {% for field in form %}
@@ -26,6 +26,6 @@
 </form>
 
 <p style="margin-top: 20px;">
-    <a href="{% url 'home' %}">На главную</a>
+    <a href="{% url 'catalog:home' %}">На главную</a>
 </p>
 {% endblock %}

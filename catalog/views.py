@@ -8,6 +8,8 @@ from django.views.generic import CreateView
 from .forms import ProductForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import permission_required
+from django.core.exceptions import PermissionDenied
+
 
 @permission_required('catalog.can_unpublish_product')
 def unpublish_product(request, pk):
@@ -60,8 +62,23 @@ class ProductUpdateView(LoginRequiredMixin, UpdateView):
     success_url = reverse_lazy('catalog:home')
     login_url = '/users/login/'
 
+    def dispatch(self, request, *args, **kwargs):
+        obj = self.get_object()
+        # Проверяем: владелец ИЛИ модератор (с правом can_unpublish_product)
+        if obj.owner != request.user and not request.user.has_perm('catalog.can_unpublish_product'):
+            raise PermissionDenied("Вы не можете редактировать этот продукт")
+        return super().dispatch(request, *args, **kwargs)
+
+
 class ProductDeleteView(LoginRequiredMixin, DeleteView):
     model = Product
     success_url = reverse_lazy('catalog:home')
     template_name = 'catalog/product_confirm_delete.html'
     login_url = '/users/login/'
+
+    def dispatch(self, request, *args, **kwargs):
+        obj = self.get_object()
+        # Проверяем: владелец ИЛИ модератор
+        if obj.owner != request.user and not request.user.has_perm('catalog.can_unpublish_product'):
+            raise PermissionDenied("Вы не можете удалить этот продукт")
+        return super().dispatch(request, *args, **kwargs)

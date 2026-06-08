@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Блог</h1>
+<a href="{% url 'blog:create' %}">Создать новую статью</a>
+
+{% for post in posts %}
+    <div>
+        <h2><a href="{% url 'blog:detail' post.pk %}">{{ post.title }}</a></h2>
+        <p>{{ post.content|truncatewords:30 }}</p>
+        <p>Просмотров: {{ post.views_count }} | Создано: {{ post.created_at }}</p>
+    </div>
+{% empty %}
+    <p>Нет опубликованных статей.</p>
+{% endfor %}
+{% endblock %}

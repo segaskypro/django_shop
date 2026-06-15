@@ -6,6 +6,7 @@ app_name = 'catalog'
 urlpatterns = [
     path('', views.HomeListView.as_view(), name='home'),
     path('product/<int:pk>/', views.ProductDetailView.as_view(), name='product_detail'),
+    path('category/<int:category_id>/', views.category_products_view, name='category_products'),  # ← новая строка
     path('create/', views.ProductCreateView.as_view(), name='product_create'),
     path('update/<int:pk>/', views.ProductUpdateView.as_view(), name='product_update'),
     path('delete/<int:pk>/', views.ProductDeleteView.as_view(), name='product_delete'),

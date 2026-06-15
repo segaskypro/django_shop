@@ -9,6 +9,30 @@ from .forms import ProductForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import permission_required
 from django.core.exceptions import PermissionDenied
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
+from django.core.cache import cache
+
+
+def get_products_by_category(category_id):
+    """Сервисная функция: возвращает продукты категории с низкоуровневым кешированием"""
+    cache_key = f'category_{category_id}'
+    products = cache.get(cache_key)
+
+    if products is None:
+        # print(f"  Загружаем из БД и сохраняем в кеш: {cache_key}")
+        products = list(Product.objects.filter(category_id=category_id, is_published=True))
+        cache.set(cache_key, products, 300)  # TTL = 300 секунд (5 минут)
+    else:
+        # print(f" Берём из кеша: {cache_key}")
+
+    return products
+
+
+def category_products_view(request, category_id):
+    """Представление для отображения продуктов в категории"""
+    products = get_products_by_category(category_id)
+    return render(request, 'catalog/category_products.html', {'products': products, 'category_id': category_id})
 
 
 @permission_required('catalog.can_unpublish_product')
@@ -18,19 +42,26 @@ def unpublish_product(request, pk):
     product.save()
     return redirect('catalog:home')
 
+@method_decorator(cache_page(60), name='dispatch')
 class HomeListView(ListView):
     model = Product
     template_name = 'catalog/home.html'
     context_object_name = 'products'
 
     def get_queryset(self):
-        # Показываем только опубликованные продукты
+        # print(" ЗАПРОС К БАЗЕ ДАННЫХ! ")
         return Product.objects.filter(is_published=True)
 
+@method_decorator(cache_page(60 * 5), name='dispatch')
 class ProductDetailView(DetailView):
     model = Product
     template_name = 'catalog/product_detail.html'
     context_object_name = 'product'
+
+    def get_object(self):
+        # print(" ЗАПРОС К БАЗЕ ДАННЫХ ДЛЯ ПРОДУКТА! ")
+        return super().get_object()
+
 
 def contacts(request):
     message = None
@@ -41,6 +72,8 @@ def contacts(request):
         message = f"Спасибо, {name}! Ваше сообщение отправлено."
         return render(request, 'catalog/contacts.html', {'message': message})
     return render(request, 'catalog/contacts.html')
+
+
 
 class ProductCreateView(LoginRequiredMixin, CreateView):
     model = Product

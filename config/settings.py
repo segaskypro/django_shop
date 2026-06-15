@@ -123,3 +123,11 @@ if 'runserver' in sys.argv:
     @register(Tags.urls)
     def skip_url_check(**kwargs):
         return []
+
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.redis.RedisCache',
+        'LOCATION': 'redis://127.0.0.1:6379/1',
+    }
+}

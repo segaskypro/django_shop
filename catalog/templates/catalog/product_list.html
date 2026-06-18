@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block title %}Все продукты{% endblock %}
+
+{% block content %}
+<h1>Все продукты</h1>
+
+{% if products %}
+    <ul>
+    {% for product in products %}
+        <li>
+            <a href="{% url 'catalog:product_detail' product.pk %}">
+                <strong>{{ product.name }}</strong>
+            </a>
+            — {{ product.price }} руб.
+            {% if product.category %}
+                <br><small>Категория: {{ product.category.name }}</small>
+            {% endif %}
+        </li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>Нет опубликованных продуктов.</p>
+{% endif %}
+
+<a href="{% url 'catalog:home' %}">На главную</a>
+{% endblock %}

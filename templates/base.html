@@ -1,0 +1,45 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Мой сайт{% endblock %}</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        nav { background: #333; color: white; padding: 10px; margin-bottom: 20px; }
+        nav a { color: white; margin-right: 15px; text-decoration: none; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .form-field {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0 15px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+    <a href="{% url 'catalog:home' %}">Главная</a>
+    <a href="{% url 'blog:list' %}">Блог</a>
+    <a href="{% url 'catalog:contacts' %}">Контакты</a>
+    <a href="{% url 'catalog:product_list' %}">Все продукты</a>
+
+    {% if user.is_authenticated %}
+        <span style="color: white; margin-left: 20px;">Привет, {{ user.email }}!</span>
+        <a href="{% url 'users:profile' %}" style="margin-left: 10px;">Профиль</a>
+        <form action="{% url 'users:logout' %}" method="post" style="display: inline;">
+            {% csrf_token %}
+            <button type="submit" style="background: none; border: none; color: white; cursor: pointer; margin-left: 10px;">Выйти</button>
+        </form>
+    {% else %}
+        <a href="{% url 'users:login' %}" style="margin-left: 20px;">Войти</a>
+        <a href="{% url 'users:register' %}">Регистрация</a>
+    {% endif %}
+</nav>
+    <div class="container">
+        {% block content %}
+        {% endblock %}
+    </div>
+</body>
+</html>

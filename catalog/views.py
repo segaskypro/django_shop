@@ -20,11 +20,11 @@ def get_products_by_category(category_id):
     products = cache.get(cache_key)
 
     if products is None:
-        # print(f"  Загружаем из БД и сохраняем в кеш: {cache_key}")
-        products = list(Product.objects.filter(category_id=category_id, is_published=True))
+        products = list(Product.objects.filter(
+            category_id=category_id,
+            is_published=True
+        ))
         cache.set(cache_key, products, 300)  # TTL = 300 секунд (5 минут)
-    else:
-        # print(f" Берём из кеша: {cache_key}")
 
     return products
 

@@ -115,3 +115,21 @@ class ProductDeleteView(LoginRequiredMixin, DeleteView):
         if obj.owner != request.user and not request.user.has_perm('catalog.can_unpublish_product'):
             raise PermissionDenied("Вы не можете удалить этот продукт")
         return super().dispatch(request, *args, **kwargs)
+
+
+def get_all_products():
+    """Сервисная функция: возвращает список всех опубликованных продуктов с низкоуровневым кешированием"""
+    cache_key = 'all_products_list'
+    products = cache.get(cache_key)
+
+    if products is None:
+        products = list(Product.objects.filter(is_published=True).select_related('category'))
+        cache.set(cache_key, products, 300)  # TTL 5 минут
+
+    return products
+
+
+def product_list_view(request):
+    """Представление для отображения списка всех продуктов"""
+    products = get_all_products()
+    return render(request, 'catalog/product_list.html', {'products': products})
